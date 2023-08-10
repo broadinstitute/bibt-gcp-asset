@@ -34,7 +34,7 @@ class Client:
         return [asset for asset in self._client.list_assets(request=request)]
 
     def get_asset(self, scope, asset_name, asset_type=None):
-        result = search_assets(
+        result = self.search_assets(
             scope, f'name="{asset_name}"', asset_types=asset_type, page_size=1
         )
         return result.results[0] if len(result.results) > 1 else None
