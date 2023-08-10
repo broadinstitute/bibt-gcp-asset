@@ -31,7 +31,7 @@ class Client:
         if content_type is not None:
             request["content_type"] = content_type
 
-        return [asset for asset in client.list_assets(request=request)]
+        return [asset for asset in self._client.list_assets(request=request)]
 
     def get_asset(self, scope, asset_name, asset_type=None):
         result = search_assets(
@@ -42,14 +42,16 @@ class Client:
     def search_assets(
         self, scope, query, asset_types=None, order_by=None, page_size=1000
     ):
-        """https://cloud.google.com/asset-inventory/docs/query-syntax"""
+        """https://cloud.google.com/asset-inventory/docs/query-syntax
+        https://cloud.google.com/asset-inventory/docs/searching-resources#search_resources
+        """
         if type(asset_types) is not list and asset_types is not None:
             asset_types = [asset_types]
         if asset_types is not None:
             request["asset_types"] = asset_types
         if order_by is not None:
             request["order_by"] = order_by
-        return client.search_all_resources(
+        return self._client.search_all_resources(
             request={
                 "scope": scope,
                 "query": query,
