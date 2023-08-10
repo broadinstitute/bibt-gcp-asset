@@ -37,7 +37,7 @@ class Client:
         result = self.search_assets(
             scope, f'name="{asset_name}"', asset_types=asset_type, page_size=1
         )
-        return result.results[0] if len(result.results) > 1 else None
+        return result.results[0] if len(result.results) > 0 else None
 
     def search_assets(
         self, scope, query, asset_types=None, order_by=None, page_size=1000
