@@ -44,6 +44,7 @@ class Client:
     ):
         """https://cloud.google.com/asset-inventory/docs/query-syntax
         https://cloud.google.com/asset-inventory/docs/searching-resources#search_resources
+        https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types
         """
         if type(asset_types) is not list and asset_types is not None:
             asset_types = [asset_types]
@@ -59,4 +60,13 @@ class Client:
                 "page_size": page_size,
                 "order_by": order_by,
             }
+        )
+
+    def search_asset_iam_policy(self, scope, query):
+        """https://cloud.google.com/asset-inventory/docs/query-syntax
+        https://cloud.google.com/asset-inventory/docs/searching-iam-policies#search_policies
+        https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types
+        """
+        return self._client.search_all_iam_policies(
+            request={"scope": scope, "query": query}
         )
