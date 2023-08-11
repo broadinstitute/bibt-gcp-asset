@@ -66,7 +66,9 @@ class Client:
         return asset
 
     def get_parent_project(self, scope, asset):
-        _LOGGER.info(f"Trying to get parent project of {asset} using scope {scope}")
+        _LOGGER.info(
+            f"Trying to get parent project of {asset.name} using scope {scope}"
+        )
         if (asset.asset_type == "cloudresourcemanager.googleapis.com/Folder") or (
             asset.asset_type == "cloudresourcemanager.googleapis.com/Organization"
         ):
@@ -81,7 +83,7 @@ class Client:
             )
             return self.get_asset(
                 scope,
-                asset.project,
+                f"//cloudresourcemanager.googleapis.com/{asset.project}",
                 asset_types=["cloudresourcemanager.googleapis.com/Project"],
                 detailed=False,
             )
@@ -95,7 +97,7 @@ class Client:
         parent = self.get_asset(
             scope,
             asset.parent_full_resource_name,
-            asset_types=[asset.parent_resource_type],
+            asset_types=[asset.parent_asset_type],
             detailed=False,
         )
         return self.get_parent_project(scope, parent)
