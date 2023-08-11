@@ -40,7 +40,7 @@ class Client:
 
         _LOGGER.debug(f"Request: {request}")
         result = self._client.list_assets(request=request)
-        if len(result.results) < 1:
+        if len(result.assets) < 1:
             _LOGGER.warning(f"No assets returned for list_assets({request})")
         return result
 
