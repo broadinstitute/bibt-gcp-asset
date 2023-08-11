@@ -90,12 +90,12 @@ class Client:
             _LOGGER.debug(
                 f"Trying to get parent project using asset.project attribute..."
             )
-            return self.get_asset(
+            return self.search_assets(
                 scope,
-                f"//cloudresourcemanager.googleapis.com/{asset.project}",
+                f'project="{asset.project}"',
                 asset_types=["cloudresourcemanager.googleapis.com/Project"],
-                detailed=False,
-            )
+                page_size=1,
+            ).results[0]
         except Exception as e:
             _LOGGER.debug(f"That didn't work: {type(e).__name__}: {e}")
             pass
@@ -103,19 +103,19 @@ class Client:
         _LOGGER.debug(
             f"Trying to get parent project using asset.parent_full_resource_name attribute..."
         )
-        parent = self.get_asset(
+        parent = self.search_assets(
             scope,
-            asset.parent_full_resource_name,
+            f'name="{asset.parent_full_resource_name}"',
             asset_types=[asset.parent_asset_type],
-            detailed=False,
+            page_size=1,
         )
-        if parent:
-            parent_project = self.get_parent_project(scope, parent)
+        if len(parent.results) > 0:
+            parent_project = self.get_parent_project(scope, parent.results[0])
             if not parent_project:
                 _LOGGER.warning(f"No parent project returned for {asset}")
             return parent_project
         _LOGGER.warning(
-            f"No asset returned by get_asset({asset.parent_full_resource_name})"
+            f'No asset returned by search_assets(name="{asset.parent_full_resource_name}")'
         )
         return None
 
