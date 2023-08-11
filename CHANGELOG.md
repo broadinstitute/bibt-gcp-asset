@@ -2,6 +2,12 @@
 
 [PyPI History](https://pypi.org/project/bibt-gcp-asset/#history)
 
+## 0.1.15 (2023-08-11)
+
+### Features
+
+- Fix bugs.
+
 ## 0.1.13 (2023-08-11)
 
 ### Features

@@ -110,19 +110,17 @@ class Client:
         _LOGGER.info(
             f"Searching assets with scope {scope} query [{query}] asset_types = {asset_types}"
         )
+        request = {
+            "scope": scope,
+            "query": query,
+            "page_size": page_size,
+        }
         if type(asset_types) is not list and asset_types is not None:
             asset_types = [asset_types]
         if asset_types is not None:
             request["asset_types"] = asset_types
         if order_by is not None:
             request["order_by"] = order_by
-        request = {
-            "scope": scope,
-            "query": query,
-            "asset_types": asset_types,
-            "page_size": page_size,
-            "order_by": order_by,
-        }
         _LOGGER.debug(f"Request: {request}")
         return self._client.search_all_resources(request)
 
