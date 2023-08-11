@@ -79,7 +79,7 @@ class Client:
             _LOGGER.debug(
                 f"Trying to get parent project using asset.project attribute..."
             )
-            return get_asset(
+            return self.get_asset(
                 scope,
                 asset.project,
                 asset_types=["cloudresourcemanager.googleapis.com/Project"],
@@ -92,7 +92,7 @@ class Client:
         _LOGGER.debug(
             f"Trying to get parent project using asset.parent_full_resource_name attribute..."
         )
-        parent = get_asset(
+        parent = self.get_asset(
             scope,
             asset.parent_full_resource_name,
             asset_types=[asset.parent_resource_type],
