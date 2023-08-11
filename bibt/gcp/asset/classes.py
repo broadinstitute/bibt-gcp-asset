@@ -39,7 +39,10 @@ class Client:
             request["content_type"] = content_type
 
         _LOGGER.debug(f"Request: {request}")
-        return self._client.list_assets(request=request)
+        result = self._client.list_assets(request=request)
+        if len(result.results) < 1:
+            _LOGGER.warning(f"No assets returned for list_assets({request})")
+        return result
 
     def get_asset(self, scope, asset_name, asset_types=None, detailed=True):
         _LOGGER.info(
@@ -48,7 +51,13 @@ class Client:
         result = self.search_assets(
             scope, f'name="{asset_name}"', asset_types=asset_types, page_size=1
         )
-        asset = result.results[0] if len(result.results) > 0 else None
+        if len(result.results) > 0:
+            asset = result.results[0]
+        else:
+            _LOGGER.warning(
+                f"No asset returned for {asset_name} under scope {scope} with type {asset_types}"
+            )
+            asset = None
         if asset and detailed:
             _LOGGER.info(f"Getting detailed metadata from list_assets endpoint...")
             for _asset in self.list_assets(
@@ -100,7 +109,15 @@ class Client:
             asset_types=[asset.parent_asset_type],
             detailed=False,
         )
-        return self.get_parent_project(scope, parent)
+        if parent:
+            parent_project = self.get_parent_project(scope, parent)
+            if not parent_project:
+                _LOGGER.warning(f"No parent project returned for {asset}")
+            return parent_project
+        _LOGGER.warning(
+            f"No asset returned by get_asset({asset.parent_full_resource_name})"
+        )
+        return None
 
     def search_assets(
         self, scope, query, asset_types=None, order_by=None, page_size=1000
@@ -124,7 +141,10 @@ class Client:
         if order_by is not None:
             request["order_by"] = order_by
         _LOGGER.debug(f"Request: {request}")
-        return self._client.search_all_resources(request)
+        result = self._client.search_all_resources(request)
+        if len(result.results) < 1:
+            _LOGGER.warning(f"No assets returned for search_assets({request})")
+        return result
 
     def search_asset_iam_policy(self, scope, query):
         """https://cloud.google.com/asset-inventory/docs/query-syntax
@@ -132,6 +152,10 @@ class Client:
         https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types
         """
         _LOGGER.info(f"Searching IAM policies with scope {scope} and query {query}")
-        return self._client.search_all_iam_policies(
-            request={"scope": scope, "query": query}
-        )
+        request = {"scope": scope, "query": query}
+        result = self._client.search_all_iam_policies(request=request)
+        if len(result.results) < 1:
+            _LOGGER.warning(
+                f"No IAM policy returned for search_asset_iam_policy({request})"
+            )
+        return result
