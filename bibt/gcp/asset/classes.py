@@ -33,14 +33,14 @@ class Client:
 
         return self._client.list_assets(request=request)
 
-    def get_asset(self, scope, asset_name, asset_type=None, detailed=True):
+    def get_asset(self, scope, asset_name, asset_types=None, detailed=True):
         result = self.search_assets(
-            scope, f'name="{asset_name}"', asset_types=asset_type, page_size=1
+            scope, f'name="{asset_name}"', asset_types=asset_types, page_size=1
         )
         asset = result.results[0] if len(result.results) > 0 else None
         if asset and detailed:
             for _asset in self.list_assets(
-                asset.parent_full_resource_name,
+                asset.project,
                 asset_types=[asset.asset_type],
                 content_type="RESOURCE",
                 page_size=10,
@@ -49,6 +49,33 @@ class Client:
                     asset = _asset
                     break
         return asset
+
+    def get_parent_project(self, scope, asset):
+        if (asset.asset_type == "cloudresourcemanager.googleapis.com/Folder") or (
+            asset.asset_type == "cloudresourcemanager.googleapis.com/Organization"
+        ):
+            raise Exception(
+                f"Parent project cannot be retrieved for folders or organizations!"
+            )
+        if asset.asset_type == ("cloudresourcemanager.googleapis.com/Project"):
+            return asset
+        try:
+            return get_asset(
+                scope,
+                asset.project,
+                asset_types=["cloudresourcemanager.googleapis.com/Project"],
+                detailed=False,
+            )
+        except:
+            pass
+
+        parent = get_asset(
+            scope,
+            asset.parent_full_resource_name,
+            asset_types=[asset.parent_resource_type],
+            detailed=False,
+        )
+        return self.get_parent_project(scope, parent)
 
     def search_assets(
         self, scope, query, asset_types=None, order_by=None, page_size=1000
