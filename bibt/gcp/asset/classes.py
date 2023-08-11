@@ -31,13 +31,24 @@ class Client:
         if content_type is not None:
             request["content_type"] = content_type
 
-        return [asset for asset in self._client.list_assets(request=request)]
+        return self._client.list_assets(request=request)
 
-    def get_asset(self, scope, asset_name, asset_type=None):
+    def get_asset(self, scope, asset_name, asset_type=None, detailed=True):
         result = self.search_assets(
             scope, f'name="{asset_name}"', asset_types=asset_type, page_size=1
         )
-        return result.results[0] if len(result.results) > 0 else None
+        asset = result.results[0] if len(result.results) > 0 else None
+        if asset and detailed:
+            for _asset in self.list_assets(
+                asset.parent_full_resource_name,
+                asset_types=[asset.asset_type],
+                content_type="RESOURCE",
+                page_size=10,
+            ):
+                if _asset.name == asset.name:
+                    asset = _asset
+                    break
+        return asset
 
     def search_assets(
         self, scope, query, asset_types=None, order_by=None, page_size=1000
