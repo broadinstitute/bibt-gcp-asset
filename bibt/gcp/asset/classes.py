@@ -55,7 +55,7 @@ class Client:
         )
         search_str = self._generate_asset_search_str(asset_name)
         _LOGGER.debug(f"Searching: {search_str}")
-        parent = self.search_assets(
+        result = self.search_assets(
             scope,
             search_str,
             asset_types=asset_types,
