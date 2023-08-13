@@ -53,7 +53,7 @@ class Client:
         _LOGGER.info(
             f"Searching for asset: {asset_name} under scope {scope} with type {asset_types}"
         )
-        search_str = self._generate_asset_search_str(asset.parent_full_resource_name)
+        search_str = self._generate_asset_search_str(asset_name)
         _LOGGER.debug(f"Searching: {search_str}")
         parent = self.search_assets(
             scope,

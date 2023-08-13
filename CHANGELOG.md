@@ -2,7 +2,7 @@
 
 [PyPI History](https://pypi.org/project/bibt-gcp-asset/#history)
 
-## 0.1.19 (2023-08-13)
+## 0.1.20 (2023-08-13)
 
 ### Features
 
