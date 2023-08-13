@@ -6,10 +6,15 @@ Classes which may be used to handle or interact with the Asset API.
 
 """
 import logging
+import re
 
 from google.cloud import asset_v1
 
 _LOGGER = logging.getLogger(__name__)
+
+_GCP_PROJECT_NUM_REGEX = (
+    r"^//cloudresourcemanager.googleapis.com/(?P<project_id>projects/[0-9]{5,20}$)"
+)
 
 
 class Client:
@@ -48,14 +53,19 @@ class Client:
         _LOGGER.info(
             f"Searching for asset: {asset_name} under scope {scope} with type {asset_types}"
         )
-        result = self.search_assets(
-            scope, f'name="{asset_name}"', asset_types=asset_types, page_size=1
+        search_str = self._generate_asset_search_str(asset.parent_full_resource_name)
+        _LOGGER.debug(f"Searching: {search_str}")
+        parent = self.search_assets(
+            scope,
+            search_str,
+            asset_types=asset_types,
+            page_size=1,
         )
         if len(result.results) > 0:
             asset = result.results[0]
         else:
             _LOGGER.warning(
-                f"No asset returned for {asset_name} under scope {scope} with type {asset_types}"
+                f"No asset returned for {search_str} under scope {scope} with type {asset_types}"
             )
             asset = None
         if asset and detailed:
@@ -103,20 +113,17 @@ class Client:
         _LOGGER.debug(
             f"Trying to get parent project using asset.parent_full_resource_name attribute..."
         )
+        search_str = self._generate_asset_search_str(asset.parent_full_resource_name)
+        _LOGGER.debug(f"Searching: {search_str}")
         parent = self.search_assets(
             scope,
-            f'name="{asset.parent_full_resource_name}"',
+            search_str,
             asset_types=[asset.parent_asset_type],
             page_size=1,
         )
         if len(parent.results) > 0:
-            parent_project = self.get_parent_project(scope, parent.results[0])
-            if not parent_project:
-                _LOGGER.warning(f"No parent project returned for {asset}")
-            return parent_project
-        _LOGGER.warning(
-            f'No asset returned by search_assets(name="{asset.parent_full_resource_name}")'
-        )
+            return self.get_parent_project(scope, parent.results[0])
+        _LOGGER.warning(f'No asset returned for get_parent_project({asset})")')
         return None
 
     def search_assets(
@@ -159,3 +166,10 @@ class Client:
                 f"No IAM policy returned for search_asset_iam_policy({request})"
             )
         return result
+
+    def _generate_asset_search_str(self, asset_name):
+        match = re.match(_GCP_PROJECT_NUM_REGEX, asset_name)
+        if match:
+            project_id = match.group("project_id")
+            return f'project="{project_id}"'
+        return f'name="{asset.parent_full_resource_name}"'
