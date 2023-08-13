@@ -172,4 +172,4 @@ class Client:
         if match:
             project_id = match.group("project_id")
             return f'project="{project_id}"'
-        return f'name="{asset.parent_full_resource_name}"'
+        return f'name="{asset_name}"'
