@@ -16,27 +16,24 @@ _GCP_PROJECT_NUM_REGEX = (
 
 
 class Client:
-    r"""This class can be used to call methods in this library using the same
-    credentials object, cutting down on API authentication flows.
+    """Instantiates a Client object for further API calls.
+
+    .. code:: python
+
+        from bibt.gcp import asset
+
+        client = asset.Client(os.environ["GCP_ORG_ID"])
+        asset = client.get_asset(...)
+
+    :type gcp_org_id: :py:class:`str`
+    :param gcp_org_id: your GCP organization ID. needed to query the Cloud Asset Inventory API.
+
+    :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
+    :param credentials: the credentials object to use when making API calls, if not
+        using the account running the function for authentication.
     """
 
     def __init__(self, gcp_org_id, credentials=None):
-        """Instantiates a Client object for further API calls.
-
-        .. code:: python
-
-            from bibt.gcp import asset
-
-            client = asset.Client(os.environ["GCP_ORG_ID"])
-            asset = client.get_asset(...)
-
-        :type gcp_org_id: :py:class:`str`
-        :param gcp_org_id: your GCP organization ID. needed to query the Cloud Asset Inventory API.
-
-        :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
-        :param credentials: the credentials object to use when making API calls, if not
-            using the account running the function for authentication.
-        """
         self._client = asset_v1.AssetServiceClient(credentials=credentials)
         self.gcp_org_id = gcp_org_id
 
@@ -45,20 +42,23 @@ class Client:
         For more information, view `the documentation <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/assets/list>`__.
 
         :type parent: :py:class:`str`
-        :param parent: the parent resource to search under. Can be one of: "organizations/1234",
-            "folders/1234", "projects/1234", or "projects/name".
+        :param parent: the parent resource to search under. Can be one of: ``organizations/1234``,
+            ``folders/1234``, ``projects/1234``, or ``projects/name``.
 
         :type asset_types: :py:class:`list`
-        :param asset_types: a list of asset types to return, in the format "compute.googleapis.com/Disk" (for example).
-            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__.
+        :param asset_types: a list of asset types to return, in the format ``compute.googleapis.com/Disk`` (for example).
+            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__
             for all supported types.
 
         :type content_type: :py:class:`str`
-        :param content_type: the type of data to return. usually you'll want "RESOURCE", but can be any value from
+        :param content_type: the type of data to return. usually you'll want ``RESOURCE``, but can be any value from
             `here <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/feeds#ContentType>`__.
 
         :type page_size: :py:class:`int`
         :param page_size: the number of results to return per page. a lower number will result in more API calls.
+
+        :rtype: `ListAssetsPager <https://cloud.google.com/python/docs/reference/cloudasset/latest/google.cloud.asset_v1.services.asset_service.pagers.ListAssetsPager>`__
+        :returns: a pager which may be iterated on to retrieve results. contains `Asset <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/Asset>`__ objects.
         """
         _LOGGER.info(
             f"Building list_assets request with parent [{parent}] and type {asset_types}"
@@ -85,20 +85,23 @@ class Client:
         """Get a specific asset by name from the CAI API.
 
         :type scope: :py:class:`str`
-        :param scope: the parent resource to search under. Can be one of: "organizations/1234",
-            "folders/1234", "projects/1234", or "projects/name".
+        :param scope: the parent resource to search under. Can be one of: ``organizations/1234``,
+            ``folders/1234``, ``projects/1234``, or ``projects/name``.
 
         :type asset_name: :py:class:`str`
-        :param asset_name: the name of the asset, in the form of "//cloudsql.googleapis.com/projects/my-project/instances/my-db"
+        :param asset_name: the name of the asset, in the form of ``//cloudsql.googleapis.com/projects/my-project/instances/my-db``.
 
         :type asset_types: :py:class:`list`
-        :param asset_types: a list of asset types to return, in the format "compute.googleapis.com/Disk" (for example).
-            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__.
+        :param asset_types: a list of asset types to return, in the format ``compute.googleapis.com/Disk`` (for example).
+            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__
             for all supported types.
 
         :type detailed: :py:class:`bool`
         :param detailed: if true, will get the full resource metadata from a ``list_assets`` call, otherwise
             just returns basic metadata from ``search_assets``.
+
+        :rtype: `Asset <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/Asset>`__
+        :returns: an asset object (or ``None``).
         """
         _LOGGER.info(
             f"Searching for asset: {asset_name} under scope {scope} with type {asset_types}"
@@ -139,11 +142,14 @@ class Client:
         or organization is passed, simply returns that.
 
         :type scope: :py:class:`str`
-        :param scope: the parent resource to search under. Can be one of: "organizations/1234",
-            "folders/1234", "projects/1234", or "projects/name".
+        :param scope: the parent resource to search under. Can be one of: ``organizations/1234``,
+            ``folders/1234``, ``projects/1234``, or ``projects/name``.
 
-        :type asset: `Asset <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/Asset>`__.
+        :type asset: `Asset <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/Asset>`__
         :param asset: the asset object for which to return the parent.
+
+        :rtype: `Asset <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/Asset>`__
+        :returns: an asset object representing a project, folder, or organization (or ``None``).
         """
         _LOGGER.info(
             f"Trying to get parent project of {asset.name} using scope {scope}"
@@ -193,16 +199,16 @@ class Client:
         For more information, view `the documentation <https://cloud.google.com/asset-inventory/docs/searching-resources#search_resources>`__.
 
         :type scope: :py:class:`str`
-        :param scope: the parent resource to search under. Can be one of: "organizations/1234",
-            "folders/1234", "projects/1234", or "projects/name".
+        :param scope: the parent resource to search under. Can be one of: ``organizations/1234``,
+            ``folders/1234``, ``projects/1234``, or ``projects/name``.
 
         :type query: :py:class:`str`
-        :param query: an asset query, see `here <https://cloud.google.com/asset-inventory/docs/query-syntax>`__.
+        :param query: an asset query, see `here <https://cloud.google.com/asset-inventory/docs/query-syntax>`__
             for more information.
 
         :type asset_types: :py:class:`list`
-        :param asset_types: a list of asset types to return, in the format "compute.googleapis.com/Disk" (for example).
-            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__.
+        :param asset_types: a list of asset types to return, in the format ``compute.googleapis.com/Disk`` (for example).
+            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__
             for all supported types.
 
         :type order_by: :py:class:`str`
@@ -211,6 +217,9 @@ class Client:
 
         :type page_size: :py:class:`int`
         :param page_size: the number of results to return per page. a lower number will result in more API calls.
+
+        :rtype: `SearchAllResourcesPager <https://cloud.google.com/python/docs/reference/cloudasset/latest/google.cloud.asset_v1.services.asset_service.pagers.SearchAllResourcesPager>`__
+        :returns: a pager which may be iterated on to retrieve results. contains `ResourceSearchResult <https://cloud.google.com/python/docs/reference/cloudasset/latest/google.cloud.asset_v1.types.ResourceSearchResult>`__ objects.
         """
         _LOGGER.info(
             f"Searching assets with scope {scope} query [{query}] asset_types = {asset_types}"
@@ -237,12 +246,15 @@ class Client:
         For more information, view `the documentation <https://cloud.google.com/asset-inventory/docs/searching-iam-policies#search_policies>`__.
 
         :type scope: :py:class:`str`
-        :param scope: the parent resource to search under. Can be one of: "organizations/1234",
-            "folders/1234", "projects/1234", or "projects/name".
+        :param scope: the parent resource to search under. Can be one of: ``organizations/1234``,
+            ``folders/1234``, ``projects/1234``, or ``projects/name``.
 
         :type query: :py:class:`str`
-        :param query: an asset query, see `here <https://cloud.google.com/asset-inventory/docs/query-syntax>`__.
+        :param query: an asset query, see `here <https://cloud.google.com/asset-inventory/docs/query-syntax>`__
             for more information.
+
+        :rtype: `SearchAllIamPoliciesPager <https://cloud.google.com/python/docs/reference/cloudasset/latest/google.cloud.asset_v1.services.asset_service.pagers.SearchAllIamPoliciesPager>`__
+        :returns: a pager which may be iterated on to retrieve results. contains `IamPolicySearchResult <https://cloud.google.com/python/docs/reference/cloudasset/latest/google.cloud.asset_v1.types.IamPolicySearchResult>`__ objects.
         """
         _LOGGER.info(f"Searching IAM policies with scope {scope} and query {query}")
         request = {"scope": scope, "query": query}
