@@ -2,7 +2,6 @@
 Classes
 ~~~~~~~
 
-Classes which may be used to handle or interact with the Asset API. See `here <https://cloud.google.com/asset-inventory/docs/libraries>`__ for official API documentation.
 """
 import logging
 import re
@@ -43,7 +42,7 @@ class Client:
 
     def list_assets(self, parent, asset_types=None, content_type=None, page_size=1000):
         """List assets from the CAI API.
-        For more information, view `the documentation <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/assets/list>`__
+        For more information, view `the documentation <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/assets/list>`__.
 
         :type parent: :py:class:`str`
         :param parent: the parent resource to search under. Can be one of: "organizations/1234",
@@ -51,12 +50,12 @@ class Client:
 
         :type asset_types: :py:class:`list`
         :param asset_types: a list of asset types to return, in the format "compute.googleapis.com/Disk" (for example).
-            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__
+            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__.
             for all supported types.
 
         :type content_type: :py:class:`str`
         :param content_type: the type of data to return. usually you'll want "RESOURCE", but can be any value from
-            `here <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/feeds#ContentType>`__
+            `here <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/feeds#ContentType>`__.
 
         :type page_size: :py:class:`int`
         :param page_size: the number of results to return per page. a lower number will result in more API calls.
@@ -94,7 +93,7 @@ class Client:
 
         :type asset_types: :py:class:`list`
         :param asset_types: a list of asset types to return, in the format "compute.googleapis.com/Disk" (for example).
-            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__
+            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__.
             for all supported types.
 
         :type detailed: :py:class:`bool`
@@ -143,7 +142,7 @@ class Client:
         :param scope: the parent resource to search under. Can be one of: "organizations/1234",
             "folders/1234", "projects/1234", or "projects/name".
 
-        :type asset: `Asset <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/Asset>`__
+        :type asset: `Asset <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/Asset>`__.
         :param asset: the asset object for which to return the parent.
         """
         _LOGGER.info(
@@ -191,19 +190,19 @@ class Client:
         self, scope, query, asset_types=None, order_by=None, page_size=1000
     ):
         """Search assets from the CAI API. This provides minimal asset metadata, use ``list_assets`` for full information.
-        For more information, view `the documentation <https://cloud.google.com/asset-inventory/docs/searching-resources#search_resources>`__
+        For more information, view `the documentation <https://cloud.google.com/asset-inventory/docs/searching-resources#search_resources>`__.
 
         :type scope: :py:class:`str`
         :param scope: the parent resource to search under. Can be one of: "organizations/1234",
             "folders/1234", "projects/1234", or "projects/name".
 
         :type query: :py:class:`str`
-        :param query: an asset query, see `here <https://cloud.google.com/asset-inventory/docs/query-syntax>`__
+        :param query: an asset query, see `here <https://cloud.google.com/asset-inventory/docs/query-syntax>`__.
             for more information.
 
         :type asset_types: :py:class:`list`
         :param asset_types: a list of asset types to return, in the format "compute.googleapis.com/Disk" (for example).
-            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__
+            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__.
             for all supported types.
 
         :type order_by: :py:class:`str`
@@ -235,14 +234,14 @@ class Client:
 
     def search_asset_iam_policy(self, scope, query):
         """Search IAM policies from the CAI API.
-        For more information, view `the documentation <https://cloud.google.com/asset-inventory/docs/searching-iam-policies#search_policies>`__
+        For more information, view `the documentation <https://cloud.google.com/asset-inventory/docs/searching-iam-policies#search_policies>`__.
 
         :type scope: :py:class:`str`
         :param scope: the parent resource to search under. Can be one of: "organizations/1234",
             "folders/1234", "projects/1234", or "projects/name".
 
         :type query: :py:class:`str`
-        :param query: an asset query, see `here <https://cloud.google.com/asset-inventory/docs/query-syntax>`__
+        :param query: an asset query, see `here <https://cloud.google.com/asset-inventory/docs/query-syntax>`__.
             for more information.
         """
         _LOGGER.info(f"Searching IAM policies with scope {scope} and query {query}")

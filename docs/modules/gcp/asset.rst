@@ -5,6 +5,3 @@ See the official Asset API Python Client documentation here: `link <https://clou
 
 .. automodule:: bibt.gcp.asset.classes
   :members:
-
-.. automodule:: bibt.gcp.asset.methods
-  :members:
