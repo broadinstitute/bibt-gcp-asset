@@ -10,11 +10,10 @@
 import os
 import sys
 
-from bibt.gcp import asset
-
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.insert(0, os.path.abspath("."))
 
+from bibt.gcp import asset  # noqa E402
 
 # -- Project information -----------------------------------------------------
 
@@ -22,7 +21,7 @@ project = "bibt-gcp-asset"
 copyright = "2023, Matthew OBrien"
 author = "Matthew OBrien"
 version = asset.__version__
-release = asset.__version__
+release = version
 
 # -- General configuration ---------------------------------------------------
 
