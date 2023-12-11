@@ -1,14 +1,9 @@
 [build-system]
-requires = ["hatchling"]
 build-backend = "hatchling.build"
+requires = ["hatchling"]
 
 [project]
-name = "bibt-gcp-asset"
-version = "0.1.31"
-authors = [{ name = "Matthew OBrien", email = "mobrien@broadinstitute.org" }]
-description = "Functionality often used by BITS Blue Team (GCP Asset Module)."
-readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = ">=3.7"
+authors = [{name = "Matthew OBrien", email = "mobrien@broadinstitute.org"}]
 classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
@@ -22,9 +17,14 @@ classifiers = [
   "Topic :: Software Development :: Libraries",
   "Topic :: Utilities",
 ]
-dependencies = ["google-cloud-asset"]
+dependencies = ["google-cloud-asset==3.19.1"]
+description = "Functionality often used by BITS Blue Team (GCP Asset Module)."
+name = "bibt-gcp-asset"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.7"
+version = "0.1.31"
 
 [project.urls]
-"Homepage" = "https://github.com/broadinstitute/bibt-gcp-asset"
-"Documentation" = "https://bibt-gcp-asset.readthedocs.io/en/latest/"
 "Bug Tracker" = "https://github.com/broadinstitute/bibt-gcp-asset/issues"
+"Documentation" = "https://bibt-gcp-asset.readthedocs.io/en/latest/"
+"Homepage" = "https://github.com/broadinstitute/bibt-gcp-asset"
