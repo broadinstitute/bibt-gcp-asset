@@ -25,7 +25,7 @@ description = "Functionality often used by BITS Blue Team (GCP Asset Module)."
 name = "bibt-gcp-asset"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.7"
-version = "0.1.32"
+version = "0.1.33"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/broadinstitute/bibt-gcp-asset/issues"
