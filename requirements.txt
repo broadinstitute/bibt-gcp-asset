@@ -1,1 +1,1 @@
-google-cloud-asset==3.19.1
+google-cloud-asset==3.21.0
