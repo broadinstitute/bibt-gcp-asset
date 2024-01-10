@@ -43,7 +43,10 @@ class Client:
         self.gcp_org_id = gcp_org_id
 
     def _ensure_valid_client(self):
-        if not self._client._transport._credentials.valid:
+        if (
+            not self._client._transport._credentials.valid
+            or not self._client._transport._credentials.expiry
+        ):
             logging.info(
                 "Refreshing client credentials, token expired: "
                 f"[{self._client._transport._credentials.expiry}]"
