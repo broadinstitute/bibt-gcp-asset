@@ -37,6 +37,9 @@ class Client:
 
     def __init__(self, gcp_org_id, credentials=None):
         self._client = asset_v1.AssetServiceClient(credentials=credentials)
+        logging.debug(
+            f"Client token will expire: [{self._client._transport._credentials.expiry}]"
+        )
         self.gcp_org_id = gcp_org_id
 
     def _ensure_valid_client(self):
@@ -49,6 +52,11 @@ class Client:
             self._client._transport._credentials.refresh(request=request)
             logging.info(
                 f"New expiration: [{self._client._transport._credentials.expiry}]"
+            )
+        else:
+            logging.debug(
+                f"Token is valid: [{self._client._transport._credentials.valid}] "
+                f"expires: [{self._client._transport._credentials.expiry}]"
             )
         return
 
