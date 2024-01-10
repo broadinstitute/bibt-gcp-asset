@@ -6,6 +6,7 @@ Classes
 import logging
 import re
 
+import google.auth.transport.requests
 from google.cloud import asset_v1
 
 _LOGGER = logging.getLogger(__name__)
@@ -26,7 +27,8 @@ class Client:
         asset = client.get_asset(...)
 
     :type gcp_org_id: :py:class:`str`
-    :param gcp_org_id: your GCP organization ID. needed to query the Cloud Asset Inventory API.
+    :param gcp_org_id: your GCP organization ID.
+        needed to query the Cloud Asset Inventory API.
 
     :type credentials: :py:class:`google_auth:google.oauth2.credentials.Credentials`
     :param credentials: the credentials object to use when making API calls, if not
@@ -37,31 +39,43 @@ class Client:
         self._client = asset_v1.AssetServiceClient(credentials=credentials)
         self.gcp_org_id = gcp_org_id
 
+    def _ensure_valid_client(self):
+        if not self._client._transport._credentials.valid:
+            request = google.auth.transport.requests.Request()
+            self._client._transport._credentials.refresh(request=request)
+        return
+
     def list_assets(self, parent, asset_types=None, content_type=None, page_size=1000):
-        """List assets from the CAI API.
-        For more information, view `the documentation <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/assets/list>`__.
+        """List assets from the CAI API. For more information, view
+            `the documentation <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/assets/list>`__.
 
         :type parent: :py:class:`str`
-        :param parent: the parent resource to search under. Can be one of: ``organizations/1234``,
-            ``folders/1234``, ``projects/1234``, or ``projects/name``.
+        :param parent: the parent resource to search under. Can be one of:
+            ``organizations/1234``, ``folders/1234``, ``projects/1234``,
+            or ``projects/name``.
 
         :type asset_types: :py:class:`list`
-        :param asset_types: a list of asset types to return, in the format ``compute.googleapis.com/Disk`` (for example).
-            See `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__
+        :param asset_types: a list of asset types to return, in the format
+            ``compute.googleapis.com/Disk`` (for example). See
+            `here <https://cloud.google.com/asset-inventory/docs/supported-asset-types#searchable_asset_types>`__
             for all supported types.
 
         :type content_type: :py:class:`str`
-        :param content_type: the type of data to return. usually you'll want ``RESOURCE``, but can be any value from
+        :param content_type: the type of data to return. usually you'll want
+            ``RESOURCE``, but can be any value from
             `here <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/feeds#ContentType>`__.
 
         :type page_size: :py:class:`int`
-        :param page_size: the number of results to return per page. a lower number will result in more API calls.
+        :param page_size: the number of results to return per page. a lower number will
+            result in more API calls.
 
         :rtype: `ListAssetsPager <https://cloud.google.com/python/docs/reference/cloudasset/latest/google.cloud.asset_v1.services.asset_service.pagers.ListAssetsPager>`__
-        :returns: a pager which may be iterated on to retrieve results. contains `Asset <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/Asset>`__ objects.
-        """
+        :returns: a pager which may be iterated on to retrieve results. contains
+            `Asset <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/Asset>`__ objects.
+        """  # noqa E501
         _LOGGER.info(
-            f"Building list_assets request with parent [{parent}] and type {asset_types}"
+            "Building list_assets request with parent "
+            f"[{parent}] and type {asset_types}"
         )
         request = {
             "parent": parent,
@@ -76,6 +90,7 @@ class Client:
             request["content_type"] = content_type
 
         _LOGGER.debug(f"Request: {request}")
+        self._ensure_valid_client()
         result = self._client.list_assets(request=request)
         if len(result.assets) < 1:
             _LOGGER.warning(f"No assets returned for list_assets({request})")
@@ -102,9 +117,10 @@ class Client:
 
         :rtype: `Asset <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/Asset>`__
         :returns: an asset object (or ``None``).
-        """
+        """  # noqa E501
         _LOGGER.info(
-            f"Searching for asset: {asset_name} under scope {scope} with type {asset_types}"
+            f"Searching for asset: {asset_name} under scope "
+            f"{scope} with type {asset_types}"
         )
         search_str = self._generate_asset_search_str(asset_name)
         _LOGGER.debug(f"Searching: {search_str}")
@@ -118,11 +134,12 @@ class Client:
             asset = result.results[0]
         else:
             _LOGGER.warning(
-                f"No asset returned for {search_str} under scope {scope} with type {asset_types}"
+                f"No asset returned for {search_str} under scope "
+                f"{scope} with type {asset_types}"
             )
             asset = None
         if asset and detailed:
-            _LOGGER.info(f"Getting detailed metadata from list_assets endpoint...")
+            _LOGGER.info("Getting detailed metadata from list_assets endpoint...")
             for _asset in self.list_assets(
                 asset.project,
                 asset_types=[asset.asset_type],
@@ -150,7 +167,7 @@ class Client:
 
         :rtype: `Asset <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/Asset>`__
         :returns: an asset object representing a project, folder, or organization (or ``None``).
-        """
+        """  # noqa E501
         _LOGGER.info(
             f"Trying to get parent project of {asset.name} using scope {scope}"
         )
@@ -158,13 +175,13 @@ class Client:
             asset.asset_type == "cloudresourcemanager.googleapis.com/Organization"
         ):
             raise Exception(
-                f"Parent project cannot be retrieved for folders or organizations!"
+                "Parent project cannot be retrieved for folders or organizations!"
             )
         if asset.asset_type == ("cloudresourcemanager.googleapis.com/Project"):
             return asset
         try:
             _LOGGER.debug(
-                f"Trying to get parent project using asset.project attribute..."
+                "Trying to get parent project using asset.project attribute..."
             )
             return self.search_assets(
                 scope,
@@ -177,7 +194,8 @@ class Client:
             pass
 
         _LOGGER.debug(
-            f"Trying to get parent project using asset.parent_full_resource_name attribute..."
+            "Trying to get parent project using "
+            "asset.parent_full_resource_name attribute..."
         )
         search_str = self._generate_asset_search_str(asset.parent_full_resource_name)
         _LOGGER.debug(f"Searching: {search_str}")
@@ -219,10 +237,12 @@ class Client:
         :param page_size: the number of results to return per page. a lower number will result in more API calls.
 
         :rtype: `SearchAllResourcesPager <https://cloud.google.com/python/docs/reference/cloudasset/latest/google.cloud.asset_v1.services.asset_service.pagers.SearchAllResourcesPager>`__
-        :returns: a pager which may be iterated on to retrieve results. contains `ResourceSearchResult <https://cloud.google.com/python/docs/reference/cloudasset/latest/google.cloud.asset_v1.types.ResourceSearchResult>`__ objects.
-        """
+        :returns: a pager which may be iterated on to retrieve results. contains
+            `ResourceSearchResult <https://cloud.google.com/python/docs/reference/cloudasset/latest/google.cloud.asset_v1.types.ResourceSearchResult>`__ objects.
+        """  # noqa E501
         _LOGGER.info(
-            f"Searching assets with scope {scope} query [{query}] asset_types = {asset_types}"
+            f"Searching assets with scope {scope} query "
+            f"[{query}] asset_types = {asset_types}"
         )
         request = {
             "scope": scope,
@@ -236,6 +256,7 @@ class Client:
         if order_by is not None:
             request["order_by"] = order_by
         _LOGGER.debug(f"Request: {request}")
+        self._ensure_valid_client()
         result = self._client.search_all_resources(request)
         if len(result.results) < 1:
             _LOGGER.warning(f"No assets returned for search_assets({request})")
@@ -254,10 +275,12 @@ class Client:
             for more information.
 
         :rtype: `SearchAllIamPoliciesPager <https://cloud.google.com/python/docs/reference/cloudasset/latest/google.cloud.asset_v1.services.asset_service.pagers.SearchAllIamPoliciesPager>`__
-        :returns: a pager which may be iterated on to retrieve results. contains `IamPolicySearchResult <https://cloud.google.com/python/docs/reference/cloudasset/latest/google.cloud.asset_v1.types.IamPolicySearchResult>`__ objects.
-        """
+        :returns: a pager which may be iterated on to retrieve results. contains
+            `IamPolicySearchResult <https://cloud.google.com/python/docs/reference/cloudasset/latest/google.cloud.asset_v1.types.IamPolicySearchResult>`__ objects.
+        """  # noqa E501
         _LOGGER.info(f"Searching IAM policies with scope {scope} and query {query}")
         request = {"scope": scope, "query": query}
+        self._ensure_valid_client()
         result = self._client.search_all_iam_policies(request=request)
         if len(result.results) < 1:
             _LOGGER.warning(
@@ -266,7 +289,9 @@ class Client:
         return result
 
     def _generate_asset_search_str(self, asset_name):
-        """Generates a query string for ``get_asset`` based on whether or not a project ID is passed."""
+        """Generates a query string for ``get_asset`` based
+        on whether or not a project ID is passed.
+        """
         match = re.match(_GCP_PROJECT_NUM_REGEX, asset_name)
         if match:
             project_id = match.group("project_id")

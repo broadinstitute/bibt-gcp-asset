@@ -2,6 +2,10 @@
 
 [PyPI History](https://pypi.org/project/bibt-gcp-asset/#history)
 
+## 0.1.35 (2024-01-10)
+
+- Automatic token refresh capability.
+
 ## 0.1.21 (2023-08-13)
 
 ### Features
