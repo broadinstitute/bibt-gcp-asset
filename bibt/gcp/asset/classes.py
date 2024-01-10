@@ -38,7 +38,8 @@ class Client:
     def __init__(self, gcp_org_id, credentials=None):
         self._client = asset_v1.AssetServiceClient(credentials=credentials)
         logging.debug(
-            f"Client token will expire: [{self._client._transport._credentials.expiry}]"
+            "Client token will expire: "
+            f"[{str(self._client._transport._credentials.expiry)}]"
         )
         self.gcp_org_id = gcp_org_id
 
@@ -49,17 +50,17 @@ class Client:
         ):
             logging.info(
                 "Refreshing client credentials, token expired: "
-                f"[{self._client._transport._credentials.expiry}]"
+                f"[{str(self._client._transport._credentials.expiry)}]"
             )
             request = google.auth.transport.requests.Request()
             self._client._transport._credentials.refresh(request=request)
             logging.info(
-                f"New expiration: [{self._client._transport._credentials.expiry}]"
+                f"New expiration: [{str(self._client._transport._credentials.expiry)}]"
             )
         else:
             logging.debug(
                 f"Token is valid: [{self._client._transport._credentials.valid}] "
-                f"expires: [{self._client._transport._credentials.expiry}]"
+                f"expires: [{str(self._client._transport._credentials.expiry)}]"
             )
         return
 
