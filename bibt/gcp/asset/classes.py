@@ -41,8 +41,15 @@ class Client:
 
     def _ensure_valid_client(self):
         if not self._client._transport._credentials.valid:
+            logging.info(
+                "Refreshing client credentials, token expired: "
+                f"[{self._client._transport._credentials.expiry}]"
+            )
             request = google.auth.transport.requests.Request()
             self._client._transport._credentials.refresh(request=request)
+            logging.info(
+                f"New expiration: [{self._client._transport._credentials.expiry}]"
+            )
         return
 
     def list_assets(self, parent, asset_types=None, content_type=None, page_size=1000):
