@@ -44,23 +44,26 @@ class Client:
         self.gcp_org_id = gcp_org_id
 
     def _ensure_valid_client(self):
-        if (
-            not self._client._transport._credentials.valid
-            or not self._client._transport._credentials.expiry
-        ):
+        try:
+            credentials = self._client._credentials
+        except AttributeError:
+            try:
+                credentials = self._client._transport._credentials
+            except AttributeError:
+                logging.error("Could not verify credentials in client.")
+                return
+        if not credentials.valid or not credentials.expiry:
             logging.info(
                 "Refreshing client credentials, token expired: "
-                f"[{str(self._client._transport._credentials.expiry)}]"
+                f"[{str(credentials.expiry)}]"
             )
             request = google.auth.transport.requests.Request()
-            self._client._transport._credentials.refresh(request=request)
-            logging.info(
-                f"New expiration: [{str(self._client._transport._credentials.expiry)}]"
-            )
+            credentials.refresh(request=request)
+            logging.info(f"New expiration: [{str(credentials.expiry)}]")
         else:
             logging.debug(
-                f"Token is valid: [{self._client._transport._credentials.valid}] "
-                f"expires: [{str(self._client._transport._credentials.expiry)}]"
+                f"Token is valid: [{credentials.valid}] "
+                f"expires: [{str(credentials.expiry)}]"
             )
         return
 
