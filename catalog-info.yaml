@@ -21,8 +21,7 @@ metadata:
     google.com/cloudbuild-location: us-east4
     backstage.io/techdocs-ref: dir:.
 spec:
-  type: API
+  type: library
   owner: bits-blue-team
   lifecycle: production
   system: bibt-libraries
-
