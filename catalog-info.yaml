@@ -1,0 +1,27 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: bibt-gcp-asset
+  title: bibt-gcp-asset
+  description: "BITS Blue Team Utilities: GCP Asset API Module"
+  links:
+    - url: https://bibt-gcp-asset.broadinstitute.org
+      title: bibt-gcp-asset
+      icon: dashboard
+  tags:
+    - bits
+    - bits-tools
+    - security
+  annotations:
+    backstage.io/kubernetes-id: bibt-gcp-asset
+    github.com/project-slug: broadinstitute/bibt-gcp-asset
+    google.com/cloudbuild-project-slug: bits-gke-clusters
+    google.com/cloudbuild-repo-name: bibt-gcp-asset
+    google.com/cloudbuild-location: us-east4
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: library
+  owner: bits-blue-team
+  lifecycle: production
+  system: bibt-libraries
