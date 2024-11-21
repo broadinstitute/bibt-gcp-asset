@@ -53,11 +53,10 @@ jobs:
       actions: read
       contents: write
       id-token: write # Needed to access the workflow's OIDC identity.
-    uses: "slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0"
+    uses: "slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.10.0"
     with:
       base64-subjects: "${{ needs.build.outputs.hashes }}"
       upload-assets: true
-      compile-generator: true # Workaround for https://github.com/slsa-framework/slsa-github-generator/issues/1163
 
   publish:
     name: "Publish"
@@ -85,4 +84,6 @@ jobs:
           gh release upload ${{ github.ref_name }} dist/* --repo ${{ github.repository }}
 
       - name: "Publish dists to PyPI"
-        uses: "pypa/gh-action-pypi-publish@v1.8.11"
+        uses: "pypa/gh-action-pypi-publish@v1.8.14"
+        with:
+          verify-metadata: false
