@@ -2,6 +2,10 @@
 
 [PyPI History](https://pypi.org/project/bibt-gcp-asset/#history)
 
+## 0.1.41 (2024-11-21)
+
+- Upated page_size value for `list_assets` and permitted it to be overriden.
+
 ## 0.1.35 (2024-01-10)
 
 - Automatic token refresh capability.

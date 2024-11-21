@@ -118,7 +118,9 @@ class Client:
             _LOGGER.warning(f"No assets returned for list_assets({request})")
         return result
 
-    def get_asset(self, scope, asset_name, asset_types=None, detailed=True):
+    def get_asset(
+        self, scope, asset_name, asset_types=None, detailed=True, page_size=1000
+    ):
         """Get a specific asset by name from the CAI API.
 
         :type scope: :py:class:`str`
@@ -136,6 +138,10 @@ class Client:
         :type detailed: :py:class:`bool`
         :param detailed: if true, will get the full resource metadata from a ``list_assets`` call, otherwise
             just returns basic metadata from ``search_assets``.
+
+        :type page_size: :py:class:`int`
+        :param page_size: the number of results to return per page. a lower number will
+            result in more API calls.
 
         :rtype: `Asset <https://cloud.google.com/asset-inventory/docs/reference/rest/v1/Asset>`__
         :returns: an asset object (or ``None``).
@@ -166,7 +172,7 @@ class Client:
                 asset.project,
                 asset_types=[asset.asset_type],
                 content_type="RESOURCE",
-                page_size=10,
+                page_size=page_size,
             ):
                 if _asset.name == asset.name:
                     _LOGGER.debug(f"Match found on {asset.name}")
