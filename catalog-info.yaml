@@ -4,7 +4,7 @@ kind: Component
 metadata:
   name: bibt-gcp-asset
   title: bibt-gcp-asset
-  description: "BITS Blue Team Utilities: GCP Asset Module"
+  description: "BITS Blue Team Utilities: GCP Asset API Module"
   links:
     - url: https://bibt-gcp-asset.broadinstitute.org
       title: bibt-gcp-asset
