@@ -17,7 +17,7 @@ test:
 	tox -p
 
 ci:
-	python -m pytest tests --junitxml=report.xml
+	python -m pytest tests/* --junitxml=report.xml
 
 
 # test-readme:
