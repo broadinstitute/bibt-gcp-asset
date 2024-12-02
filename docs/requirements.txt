@@ -1,2 +1,8 @@
-alabaster==0.7.13
-sphinx==7.2.6
+###################################################################
+#                 !!! DO NOT CHANGE THIS FILE !!!                 #
+#              This file is managed by Terraform in               #
+#          the broadinstitute/bibt-terraform repository.          #
+#  Any changes made outside that repository WILL be overwritten.  #
+###################################################################
+alabaster==1.0.0
+sphinx==8.1.3
