@@ -1,3 +1,10 @@
+###################################################################
+#                 !!! DO NOT CHANGE THIS FILE !!!                 #
+#              This file is managed by Terraform in               #
+#          the broadinstitute/bibt-terraform repository.          #
+#  Any changes made outside that repository WILL be overwritten.  #
+###################################################################
+
 # .PHONY: docs
 init:
 	python -m pip install -r requirements-test.txt
