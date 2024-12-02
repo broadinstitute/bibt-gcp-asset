@@ -5,4 +5,4 @@
 #  Any changes made outside that repository WILL be overwritten.  #
 ###################################################################
 -e .
-pytest==7.4.3
+pytest==8.3.4
