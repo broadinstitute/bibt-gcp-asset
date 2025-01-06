@@ -25,7 +25,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.5.1
+    rev: v1.5.5
     hooks:
       - id: remove-crlf
       - id: remove-tabs
@@ -44,7 +44,7 @@ repos:
         args: ["--disable-plugin", "KeywordDetector"]
 
   - repo: https://github.com/psf/black
-    rev: 24.8.0
+    rev: 24.10.0
     hooks:
       - id: black
         # It is recommended to specify the latest version of Python
